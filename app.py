@@ -2,21 +2,25 @@ import streamlit as st
 import pandas as pd
 import pickle
 import os
+import requests
 
-# ----------------------------
-# Deployment-safe paths
-# ----------------------------
-BASE_DIR = os.path.dirname(__file__)  # directory of app.py
-model_path = os.path.join(BASE_DIR, "dt.pkl")
-preprocessor_path = os.path.join(BASE_DIR, "preprocessor.pkl")
+# URLs of your files in GitHub
+MODEL_URL = "https://raw.githubusercontent.com/bais05/Crop-Yield-Prediction/main/dt.pkl"
+PREPROCESSOR_URL = "https://raw.githubusercontent.com/bais05/Crop-Yield-Prediction/main/preprocessor.pkl"
 
-# ----------------------------
-# Load files safely
-# ----------------------------
-with open(model_path, "rb") as f:
+# download if missing
+if not os.path.exists("dt.pkl"):
+    with open("dt.pkl", "wb") as f:
+        f.write(requests.get(MODEL_URL).content)
+
+if not os.path.exists("preprocessor.pkl"):
+    with open("preprocessor.pkl", "wb") as f:
+        f.write(requests.get(PREPROCESSOR_URL).content)
+
+# load files
+with open("dt.pkl", "rb") as f:
     model = pickle.load(f)
-
-with open(preprocessor_path, "rb") as f:
+with open("preprocessor.pkl", "rb") as f:
     preprocessor = pickle.load(f)
 
 # ----------------------------
